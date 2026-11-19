@@ -1,0 +1,98 @@
+<template>
+  <!-- STARTER ACT — one continuous act with a travelling camera, ambient motion, a fluted-glass light background
+       and an orb mascot. Copy to compositions/frames/NN-actN.html, then replace:
+         aX / NN-actN  → your prefix and composition id (every class must be unique across acts)
+         W/H (1080x1920 portrait here; use 1920x1080 for landscape and CX/CY 960/540)
+         DUR           → the act duration from voice_split.json (after merge_acts.py)
+         brand colours (#F7A21B orange / #16A34A green here), fonts in assets/fonts/
+       Read references/motion-graphics.md first: the five laws + recipes + pitfalls. -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+@font-face{font-family:"Geist";font-weight:100 900;font-style:normal;font-display:block;src:url("assets/fonts/Geist-var.woff2") format("woff2");}
+#root{position:absolute;inset:0;width:1080px;height:1920px;overflow:hidden;font-family:"Geist",sans-serif;color:#0B0F14;}
+.aX-ground{position:absolute;inset:0;background:#FAFAF7;overflow:hidden;}
+.aX-blob{position:absolute;border-radius:50%;}
+.aX-glass{position:absolute;inset:0;display:flex;}
+.aX-glass i{flex:1;height:100%;background:linear-gradient(90deg,rgba(255,255,255,.42),rgba(255,255,255,0) 45%,rgba(255,255,255,.28));-webkit-backdrop-filter:blur(26px);backdrop-filter:blur(26px);border-right:1px solid rgba(255,255,255,.35);}
+.aX-scene{position:absolute;inset:0;overflow:hidden;}
+.aX-world{position:absolute;left:0;top:0;width:1080px;height:1920px;transform-origin:0 0;}
+.abs{position:absolute;}
+.aX-w{display:inline-block;}
+.aX-mask{position:absolute;overflow:hidden;white-space:nowrap;padding:0 .06em .16em 0;}
+.aX-h{left:80px;top:560px;font-weight:800;font-size:84px;letter-spacing:-3px;line-height:1;}
+.aX-pill{display:inline-block;padding:0 .32em .06em;border-radius:999px;color:#fff;background:linear-gradient(100deg,#F7A21B 0%,#FF8A1F 45%,#16A34A 100%);box-shadow:0 20px 50px -20px rgba(247,162,27,.8);}
+/* orb mascot */
+.aX-orb{position:absolute;left:0;top:0;width:0;height:0;}
+.aX-shadow{position:absolute;left:-90px;top:118px;width:180px;height:30px;border-radius:50%;background:radial-gradient(closest-side,rgba(60,40,10,.28),rgba(60,40,10,0));}
+.aX-body{position:absolute;left:-110px;top:-110px;width:220px;height:220px;transform-origin:50% 100%;}
+.aX-ball{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 34% 28%,#FFE6B3 0%,#FFBA4D 22%,#F7A21B 55%,#D67400 100%);box-shadow:inset -16px -20px 34px rgba(170,80,0,.32),0 30px 60px -22px rgba(247,162,27,.75);}
+.aX-ant{position:absolute;left:104px;top:-38px;width:8px;height:44px;border-radius:4px;background:#0E7A37;}
+.aX-ant::after{content:"";position:absolute;left:-10px;top:-18px;width:28px;height:28px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#8CF0B5,#16A34A 60%,#0E7A37);}
+.aX-eyes{position:absolute;left:56px;top:62px;width:110px;height:70px;}
+.aX-eye{position:absolute;top:0;width:42px;height:58px;border-radius:50%;background:#fff;overflow:hidden;}
+.aX-eye i{position:absolute;left:11px;top:16px;width:22px;height:26px;border-radius:50%;background:#1B1206;}
+.aX-eye i::after{content:"";position:absolute;left:5px;top:4px;width:7px;height:7px;border-radius:50%;background:#fff;}
+.aX-smile{position:absolute;left:84px;top:140px;width:54px;height:24px;border-bottom:7px solid #8A3F00;border-radius:0 0 40px 40px;}
+  </style>
+  <div id="root" data-composition-id="NN-actN" data-width="1080" data-height="1920">
+    <div id="aX-ground" class="aX-ground clip" data-start="0" data-duration="10.0" data-track-index="0">
+      <div class="aX-blob aX-b1" style="left:-260px;top:80px;width:900px;height:900px;background:radial-gradient(closest-side,rgba(247,162,27,.5),rgba(247,162,27,0))"></div>
+      <div class="aX-blob aX-b2" style="left:440px;top:760px;width:900px;height:900px;background:radial-gradient(closest-side,rgba(0,212,106,.38),rgba(0,212,106,0))"></div>
+      <div class="aX-glass"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    </div>
+    <div id="aX-scene" class="aX-scene clip" data-start="0" data-duration="10.0" data-track-index="1">
+      <div class="aX-world" id="aX-world" data-layout-allow-overflow data-layout-allow-occlusion>
+        <!-- station 1 (world y 0..1920) -->
+        <div class="aX-mask aX-h"><span class="aX-w">Your</span> <span class="aX-w">headline</span> <span class="aX-w aX-pill">here.</span></div>
+        <!-- station 2 at world y 2000.. etc. — place stations, the camera travels between them -->
+        <div class="aX-orb" id="aX-orb"><div class="aX-shadow"></div><div class="aX-body" id="aX-body"><div class="aX-ant"></div><div class="aX-ball"></div><div class="aX-eyes"><div class="aX-eye" style="left:0"><i></i></div><div class="aX-eye" style="left:68px"><i></i></div></div><div class="aX-smile"></div></div></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const root = document.querySelector('[data-composition-id="NN-actN"]');
+      const $ = (s) => root.querySelector(s), $$ = (s) => root.querySelectorAll(s);
+      const DUR = 10.0, CX = 540, CY = 960;            // landscape: 960, 540
+      const CUE = { headline: 0.2, here: 1.1 };         // word times from merge_acts.py output (act-relative)
+
+      // camera — one state, one writer
+      const world = $("#aX-world"), cam = { x: 0, y: 0, s: 1, blur: 0 };
+      const at = (wx, wy, s) => ({ x: CX - s * wx, y: CY - s * wy, s });
+      const apply = () => { world.style.transform = "translate(" + cam.x + "px," + cam.y + "px) scale(" + cam.s + ")"; world.style.filter = cam.blur > 0.05 ? "blur(" + cam.blur + "px)" : "none"; };
+      Object.assign(cam, at(540, 960, 1.06)); apply();
+      const camTo = (wx, wy, s, d, ease, t) => { const p = at(wx, wy, s); tl.to(cam, { x: p.x, y: p.y, s: p.s, duration: d, ease, onUpdate: apply }, t); };
+      const blurPulse = (peak, t, d) => { tl.to(cam, { blur: peak, duration: d / 2, ease: "power2.in", onUpdate: apply }, t); tl.to(cam, { blur: 0, duration: d / 2, ease: "power2.out", onUpdate: apply }, t + d / 2); };
+      camTo(540, 960, 1.0, DUR, "sine.inOut", 0);      // breathing drift; add legs: camTo(..., "expo.inOut", t); blurPulse(16, t, .5)
+
+      // ambient — everything idle keeps moving
+      const amb = { t: 0 }, B1 = $(".aX-b1"), B2 = $(".aX-b2");
+      tl.to(amb, { t: DUR, duration: DUR, ease: "none", onUpdate: () => {
+        const t = amb.t;
+        B1.style.transform = "translate(" + Math.sin(t * 0.35) * 140 + "px," + Math.cos(t * 0.28) * 120 + "px)";
+        B2.style.transform = "translate(" + Math.cos(t * 0.3) * 150 + "px," + Math.sin(t * 0.33) * 130 + "px)";
+      } }, 0);
+
+      // mascot helpers
+      const orb = $("#aX-orb"), body = $("#aX-body"), P = { x: 540, y: 1100 };
+      tl.set(orb, { x: P.x, y: P.y }, 0);
+      const hop = (t, x, y, h, d) => { h = h || 170; d = d || 0.55; const top = Math.min(P.y, y) - h;
+        tl.to(orb, { x, duration: d, ease: "power1.inOut" }, t); tl.to(orb, { y: top, duration: d / 2, ease: "power2.out" }, t); tl.to(orb, { y, duration: d / 2, ease: "power2.in" }, t + d / 2);
+        tl.to(body, { scaleX: 0.86, scaleY: 1.16, duration: 0.1 }, t); tl.to(body, { scaleX: 1, scaleY: 1, duration: 0.2 }, t + 0.12);
+        tl.to(body, { scaleX: 1.28, scaleY: 0.74, duration: 0.07 }, t + d); tl.to(body, { scaleX: 1, scaleY: 1, duration: 0.45, ease: "elastic.out(1,0.4)" }, t + d + 0.07);
+        P.x = x; P.y = y; };
+      const blink = (t) => { tl.to(".aX-eye", { scaleY: 0.1, duration: 0.06 }, t); tl.to(".aX-eye", { scaleY: 1, duration: 0.1 }, t + 0.08); };
+      const look = (t, dx, dy) => tl.to(".aX-eye i", { x: dx, y: dy, duration: 0.18, ease: "power2.out" }, t);
+      const pop = (sel, t, st) => tl.fromTo(sel, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(2.2)", stagger: st || 0.08 }, t);
+
+      // the act
+      tl.fromTo(".aX-h .aX-w", { yPercent: 160, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.5, ease: "expo.out", stagger: 0.15 }, CUE.headline);
+      tl.fromTo(orb, { scale: 0 }, { scale: 1, duration: 0.5, ease: "back.out(2.5)" }, 0.3);
+      hop(1.2, 760, 1100); blink(2.0); look(2.2, 8, -4);
+
+      window.__timelines["NN-actN"] = tl;
+    })();
+  </script>
+</template>

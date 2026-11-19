@@ -1,0 +1,43 @@
+<template>
+  <!-- Copy to compositions/frames/NN-name.html. Replace NN-name / fNN everywhere, the canvas size, the
+       duration (= this frame's duration from voice_split.json) and the CUE times (from align_words.py). -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    @font-face{font-family:"Brand Sans";font-weight:700;font-style:normal;font-display:block;src:url("assets/fonts/Brand-700.woff2") format("woff2");}
+    @font-face{font-family:"Brand Sans";font-weight:800;font-style:normal;font-display:block;src:url("assets/fonts/Brand-800.woff2") format("woff2");}
+    /* Brand tokens — set from frame.md (ground, ink, accent, secondary). */
+    #root{--ground:#F7F5F0;--ink:#111827;--accent:#E4572E;--secondary:#1F3A93;
+      position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;font-family:"Brand Sans",sans-serif;color:var(--ink);}
+    .fNN-ground{position:absolute;inset:0;background:var(--ground);}
+    .fNN-title{position:absolute;left:120px;top:300px;font-weight:800;font-size:140px;line-height:1;letter-spacing:-4px;text-transform:uppercase;white-space:nowrap;}
+    .fNN-panel{position:absolute;left:1110px;top:150px;width:690px;height:560px;background:var(--ink);}
+    .fNN-ribbon{position:absolute;left:120px;top:150px;padding:18px 32px;background:var(--accent);color:#fff;font-weight:800;font-size:44px;text-transform:uppercase;white-space:nowrap;transform-origin:0 50%;}
+  </style>
+
+  <div id="root" data-composition-id="NN-name" data-width="1920" data-height="1080">
+    <div id="fNN-ground" class="fNN-ground clip" data-start="0" data-duration="6.0" data-track-index="0"></div>
+    <div id="fNN-scene" class="fNN-scene clip" data-start="0" data-duration="6.0" data-track-index="1">
+      <div class="fNN-ribbon">Kicker</div>
+      <div class="fNN-title">Hero word</div>
+      <div class="fNN-panel"></div>
+    </div>
+    <!-- Footage inside the panel rectangle; starts after the panel has wiped open. -->
+    <video data-frame-video="approved" src="assets/clip.mp4" muted playsinline data-start="3.2" data-duration="2.8" data-track-index="4"
+      data-frame-video-x="1110" data-frame-video-y="150" data-frame-video-width="690" data-frame-video-height="560" data-frame-video-fit="cover"></video>
+  </div>
+
+  <script>
+    (function () {
+      window.__timelines = window.__timelines || {};
+      const ID = "NN-name";
+      const tl = gsap.timeline({ paused: true });
+      const CUE = { first: 0.2, hero: 1.1, panel: 2.8 };   // frame-relative word times
+
+      tl.fromTo(".fNN-ribbon", { clipPath: "inset(-30% 100% -40% 0%)" }, { clipPath: "inset(-30% 0% -40% 0%)", duration: 0.5, ease: "power3.out" }, CUE.first);
+      tl.fromTo(".fNN-title", { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, CUE.hero - 0.1);
+      tl.fromTo(".fNN-panel", { clipPath: "inset(0% 0% 100% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.5, ease: "power3.out" }, CUE.panel - 0.1);
+
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>
